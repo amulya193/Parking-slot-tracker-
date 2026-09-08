@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parking Slot Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .form-box {
+            margin: 20px auto;
+        }
+
+        input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        .parking-area {
+            display: grid;
+            grid-template-columns: repeat(5, 140px);
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .slot {
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .available {
+            background-color: #2ecc71;
+        }
+
+        .occupied {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚗 Parking Slot Tracker</h1>
+
+    <div class="form-box">
+        <input type="text" id="vehicleNumber" placeholder="Enter Vehicle Number">
+        <button onclick="bookSlot()">Book Slot</button>
+        <button onclick="removeBooking()">Remove Booking</button>
+    </div>
+
+    <div class="parking-area" id="parkingArea"></div>
+
+    <script>
+        const totalSlots = 10;
+        const parkingArea = document.getElementById("parkingArea");
+        let slots = [];
+
+        // Initialize slots
+        for (let i = 1; i <= totalSlots; i++) {
+            slots.push({ slotNo: i, vehicle: null });
+
+            const div = document.createElement("div");
+            div.className = "slot available";
+            div.id = "slot" + i;
+            div.innerText = "Slot " + i + "\nAvailable";
+            parkingArea.appendChild(div);
+        }
+
+        function bookSlot() {
+            const vehicleNo = document.getElementById("vehicleNumber").value.trim();
+            if (vehicleNo === "") {
+                alert("Please enter vehicle number");
+                return;
+            }
+
+            const freeSlot = slots.find(slot => slot.vehicle === null);
+            if (!freeSlot) {
+                alert("Parking Full!");
+                return;
+            }
+
+            freeSlot.vehicle = vehicleNo;
+            const slotDiv = document.getElementById("slot" + freeSlot.slotNo);
+            slotDiv.classList.remove("available");
+            slotDiv.classList.add("occupied");
+            slotDiv.innerText = `Slot ${freeSlot.slotNo}\n${vehicleNo}`;
+
+            document.getElementById("vehicleNumber").value = "";
+        }
+
+        function removeBooking() {
+            const vehicleNo = document.getElementById("vehicleNumber").value.trim();
+            if (vehicleNo === "") {
+                alert("Enter vehicle number to remove booking");
+                return;
+            }
+
+            const bookedSlot = slots.find(slot => slot.vehicle === vehicleNo);
+            if (!bookedSlot) {
+                alert("Vehicle not found!");
+                return;
+            }
+
+            bookedSlot.vehicle = null;
+            const slotDiv = document.getElementById("slot" + bookedSlot.slotNo);
+            slotDiv.classList.remove("occupied");
+            slotDiv.classList.add("available");
+            slotDiv.innerText = `Slot ${bookedSlot.slotNo}\nAvailable`;
+
+            document.getElementById("vehicleNumber").value = "";
+        }
+    </script>
+
+</body>
+</html>
